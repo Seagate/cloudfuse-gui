@@ -1,0 +1,14 @@
+.idea/
+.vscode/settings.json
+*.out
+venv/
+.venv/
+.env
+**/var.ps1
+gui/__pycache__/
+gui/pyside6/__pycache__/
+ui_*.py
+**/logfile.txt
+dist/
+**/Output/
+build/

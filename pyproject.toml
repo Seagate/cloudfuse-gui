@@ -1,0 +1,25 @@
+[project]
+name = "cloudfuse-gui"
+version = "0.1.0"
+description = "GUI for cloudfuse, a FUSE filesystem for S3 and Azure storage"
+authors = [
+        {name = "James Fantin-Hardesty"},
+]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+repository = "https://github.com/Seagate/cloudfuse-gui"
+dependencies = [
+    "pyside6 (>=6.9.0,<7.0.0)",
+    "pyyaml (>=6.0.2,<7.0.0)"
+]
+
+[tool.poetry.scripts]
+build-exe-script = "pyinstaller.py"
+
+[tool.poetry.group.dev.dependencies]
+pyinstaller = "^6.12.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

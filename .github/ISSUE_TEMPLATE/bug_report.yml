@@ -1,0 +1,69 @@
+name: Bug report
+description: Report problems and issues with Cloudfuse-GUI.
+labels: [bug]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Welcome!
+
+        Thanks for taking the time to fill out this bug report!
+
+        If you don't want to use this form, just [email us](mailto:cloudfuse@seagate.com?subject=%5BBug%20Report%5D%20%3CAdd%20Title%20Here%3E&body=Problem%3A%0A%0A%0AExpected%20Behavior%3A%0A%0A%0AHow%20we%20can%20Make%20it%20Repeat%3A%0A%0A%0AMy%20Setup%20%28version%2C%20operating%20system%2C%20config%20options%2C%20etc.%29%3A%0A%0A%0ADetails%3A%0A%0A)!
+
+  - type: textarea
+    attributes:
+      label: Problem
+      description: Describe what the problem is.
+      placeholder: Explain what happened.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: Describe what you think should have happened instead.
+      placeholder: Explain what should have happened.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: How to reproduce
+      description: How can we reproduce the problem?
+      placeholder: Provide instructions to reproduce the problem.
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Environment
+
+  - type: textarea
+    attributes:
+      label: Deployment information
+      description: |
+        Please tell us about your setup, including operating system, Cloudfuse-GUI version, Cloudfuse version, mount command used, config options etc.
+        Note:
+        Copying or uploading your config file here will help a lot, but **data entered here will be publicly viewable**,
+        so please **make sure you remove any private information (such as bucket credentials) before sharing!**
+        When in doubt, **do __not__ share your config file**.
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Details
+
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: >
+        Add anything else that you think we should know about here.
+
+  - type: markdown
+    attributes:
+      value: "Thanks again for completing our form! Doing so is a big help."

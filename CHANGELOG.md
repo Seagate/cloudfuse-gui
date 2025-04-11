@@ -1,0 +1,1 @@
+# Cloudfuse-GUI Changelog #
