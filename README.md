@@ -1,10 +1,18 @@
-# Cloudfuse-GUI - An S3 and Azure Storage FUSE driver
+# Cloudfuse-GUI - Frontend for Cloudfuse, an S3 and Azure Storage FUSE driver
 
-[![License](https://img.shields.io/github/license/Seagate/cloudfuse-gui)](/LICENSE)
-[![Release](https://img.shields.io/github/release/Seagate/cloudfuse-gui.svg)](https://github.com/Seagate/cloudfuse-gui/releases/latest)
-[![GitHub Releases Stats of cloudfuse](https://img.shields.io/github/downloads/Seagate/cloudfuse-gui/total.svg?logo=github)](https://somsubhra.github.io/github-release-stats/?username=Seagate&repository=cloudfuse-gui)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Seagate/cloudfuse-gui)](https://goreportcard.com/report/github.com/Seagate/cloudfuse-gui)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Seagate/cloudfuse-gui/badge)](https://scorecard.dev/viewer/?uri=github.com/Seagate/cloudfuse-gui)
+[![License][license-badge]][license-url]
+[![Release][release-badge]][release-url]
+[![GitHub Releases Stats of cloudfuse][stats-badge]][stats-url]
+[![OpenSSF Scorecard][openssf-badge]][openssf-url]
+
+[license-badge]: https://img.shields.io/github/license/Seagate/cloudfuse-gui
+[license-url]: https://github.com/Seagate/cloudfuse-gui/blob/main/LICENSE
+[release-badge]: https://img.shields.io/github/release/Seagate/cloudfuse-gui.svg
+[release-url]: https://github.com/Seagate/cloudfuse-gui/releases/latest
+[stats-badge]: https://img.shields.io/github/downloads/Seagate/cloudfuse-gui/total.svg?logo=github
+[stats-url]: https://somsubhra.github.io/github-release-stats/?username=Seagate&repository=cloudfuse-gui
+[openssf-badge]: https://img.shields.io/ossf-scorecard/github.com/Seagate/cloudfuse-gui?label=openssf%20scorecard
+[openssf-url]: https://scorecard.dev/viewer/?uri=github.com/Seagate/cloudfuse-gui
 
 Cloudfuse-GUI provides the ability to mount a cloud bucket in your local filesystem on Linux and Windows with a GUI for easy configuration.
 With Cloudfuse you can easily read and write to the cloud, and connect programs on your computer to the cloud even if they're not cloud-aware.
