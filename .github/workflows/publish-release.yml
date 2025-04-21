@@ -1,0 +1,313 @@
+name: Release binaries
+permissions: {}
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  compile-gui:
+    # Compile the GUI on Windows & Linux, and write the GUI binaries to actions/cache
+    name: Compile GUI
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pip dependencies and PyInstaller
+        run: |
+          pip3 install --upgrade pip
+          pip3 install -r gui/requirements.txt pyinstaller # Install pyinstaller here
+        shell: bash
+
+      - name: Install libxcb-cursor0 # Needed for PySide6 on some Linux runners
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |-
+          sudo apt-get update
+          sudo apt-get install -y libxcb-cursor0
+
+      - name: Compile GUI
+        shell: bash
+        working-directory: ./gui
+        run: |
+          ./create_gui.sh
+          mv dist/cloudfuseGUI dist/cloudfuseGUI_${{ runner.os }}
+
+      - name: Cache compiled GUI
+        uses: actions/cache/save@v4
+        with:
+          enableCrossOsArchive: true
+          path: gui/dist/cloudfuseGUI_${{ runner.os }}
+          # Use a consistent, specific key including spec and requirements
+          key: ${{ runner.os }}-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
+
+  create-installer:
+    # Run Inno Setup to create the Windows app installer, then write it to actions/cache
+    name: Create Windows Installer
+    needs: compile-gui
+    runs-on: windows-latest
+    env:
+      go: "1.24"
+      cgo: "0"
+      winfsp: winfsp-2.0.23075.msi
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+        # Get the WinFSP installer (from cache or download)
+      - name: Get cached WinFSP installer
+        id: restore-winfsp-installer
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.winfsp }}
+          key: ${{ env.winfsp }}
+
+      - name: Download WinFSP installer
+        if: ${{ ! steps.restore-winfsp-installer.outputs.cache-hit }}
+        shell: bash
+        run: |
+          curl -LOf https://github.com/winfsp/winfsp/releases/download/v2.0/${{ env.winfsp }}
+
+      - name: Cache WinFSP installer
+        if: ${{ ! steps.restore-winfsp-installer.outputs.cache-hit }}
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.winfsp }}
+          key: ${{ env.winfsp }}
+
+      - name: Fetch cached compiled GUI
+        uses: actions/cache/restore@v4
+        with:
+          enableCrossOsArchive: true
+          path: gui/dist/cloudfuseGUI_${{ runner.os }}
+          # Use the same key as the save step in compile-gui
+          key: ${{ runner.os }}-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
+          fail-on-cache-miss: true
+        # don't continue if we fail get the compiled GUI for the Windows installer
+        continue-on-error: false
+
+      - name: Set Version
+        id: get_version
+        shell: bash
+        # Use GITHUB_OUTPUT for setting output variables
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+
+      - name: Run Inno Setup
+        # Build the installer and save it to actions/cache
+        working-directory: ./build
+        shell: bash
+        # Inno Setup is pre-installed on GitHub's windows-latest image
+        # see documentation: https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md
+        run: |
+          # Pass version to Inno Setup via command line define
+          "C:/Program Files (x86)/Inno Setup 6/iscc.exe" /DAppVersion=${{ steps.get_version.outputs.VERSION }} windows_installer_build.iss
+
+      - name: Rename installer
+        shell: bash
+        run: |
+          mv build/Output/cloudfuse.exe build/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
+
+      - name: Cache windows installer
+        uses: actions/cache/save@v4
+        with:
+          path: build/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
+          key: windows-cloudfuse-installer-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
+
+  release:
+    # Package and publish GUI builds, Windows installer, Deb and RPM packages
+    name: Release Binaries
+    needs: [compile-gui, create-installer]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set Version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+
+      - name: Restore Linux compiled GUI
+        uses: actions/cache/restore@v4
+        with:
+          path: gui/dist/cloudfuseGUI_Linux
+          key: Linux-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
+          fail-on-cache-miss: true
+
+      - name: Restore Windows compiled GUI
+        uses: actions/cache/restore@v4
+        with:
+          enableCrossOsArchive: true
+          path: gui/dist/cloudfuseGUI_Windows
+          key: Windows-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
+          fail-on-cache-miss: true
+
+      - name: Restore Windows Installer
+        id: restore-installer
+        uses: actions/cache/restore@v4
+        with:
+          path: ./cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe # Restore to root
+          key: windows-cloudfuse-installer-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
+          fail-on-cache-miss: true
+
+      - name: Install Packaging Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip dpkg-dev rpm fakeroot binutils
+
+      - name: Define Asset Names
+        id: assets
+        shell: bash
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          ARCH=$(dpkg --print-architecture) # Get architecture for deb/rpm naming
+          echo "LINUX_GUI_ZIP=cloudfuseGUI_${VERSION}_linux_amd64.zip" >> $GITHUB_OUTPUT
+          echo "WINDOWS_GUI_ZIP=cloudfuseGUI_${VERSION}_windows_amd64.zip" >> $GITHUB_OUTPUT
+          echo "DEB_PACKAGE=cloudfuse-gui_${VERSION}_${ARCH}.deb" >> $GITHUB_OUTPUT
+          echo "RPM_PACKAGE=cloudfuse-gui-${VERSION}-1.${ARCH}.rpm" >> $GITHUB_OUTPUT # RPM versioning often includes a release number (e.g., -1)
+          echo "HASH_FILE=sha256sums.txt" >> $GITHUB_OUTPUT
+
+      - name: Zip Linux GUI artifact
+        run: |
+          cd gui/dist
+          zip -r ../../${{ steps.assets.outputs.LINUX_GUI_ZIP }} cloudfuseGUI_Linux
+          cd ../..
+
+      - name: Zip Windows GUI artifact
+        run: |
+          cd gui/dist
+          zip -r ../../${{ steps.assets.outputs.WINDOWS_GUI_ZIP }} cloudfuseGUI_Windows
+          cd ../..
+
+      # --- Build DEB Package ---
+      - name: Prepare DEB structure
+        run: |
+          mkdir -p deb_build/DEBIAN
+          mkdir -p deb_build/usr/bin
+          mkdir -p deb_build/usr/share/applications
+          cp gui/dist/cloudfuseGUI_Linux deb_build/usr/bin/cloudfuseGUI
+          chmod +x deb_build/usr/bin/cloudfuseGUI
+          # Copy control file and replace version
+          sed "s/@@VERSION@@/${{ steps.get_version.outputs.VERSION }}/g" packaging/deb/control > deb_build/DEBIAN/control
+          # Copy desktop entry and icon (adjust paths if needed)
+          cp packaging/common/cloudfuse-gui.desktop deb_build/usr/share/applications/
+
+      - name: Build DEB package
+        run: fakeroot dpkg-deb --build deb_build ${{ steps.assets.outputs.DEB_PACKAGE }}
+
+      # --- Build RPM Package ---
+      - name: Prepare RPM build environment
+        run: |
+          mkdir -p rpm_build/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          cp gui/dist/cloudfuseGUI_Linux rpm_build/SOURCES/cloudfuseGUI
+          # Copy other sources if needed by spec file
+          cp packaging/common/cloudfuse-gui.desktop rpm_build/SOURCES/
+          cp packaging/common/cloudfuse-gui.svg rpm_build/SOURCES/
+          # Copy spec file and replace version
+          sed "s/@@VERSION@@/${{ steps.get_version.outputs.VERSION }}/g" packaging/rpm/cloudfuse-gui.spec > rpm_build/SPECS/cloudfuse-gui.spec
+
+      - name: Build RPM package
+        run: |
+          rpmbuild -bb --define "_topdir $(pwd)/rpm_build" --define "dist .$(lsb_release -cs)" rpm_build/SPECS/cloudfuse-gui.spec
+          # Find the built RPM and move/rename it
+          find rpm_build/RPMS -name '*.rpm' -exec mv {} ${{ steps.assets.outputs.RPM_PACKAGE }} \;
+
+      - name: Calculate Hashes
+        shell: bash
+        run: |
+          sha256sum ${{ steps.assets.outputs.LINUX_GUI_ZIP }} > ${{ steps.assets.outputs.HASH_FILE }}
+          sha256sum ${{ steps.assets.outputs.WINDOWS_GUI_ZIP }} >> ${{ steps.assets.outputs.HASH_FILE }}
+          sha256sum ${{ steps.assets.outputs.DEB_PACKAGE }} >> ${{ steps.assets.outputs.HASH_FILE }}
+          sha256sum ${{ steps.assets.outputs.RPM_PACKAGE }} >> ${{ steps.assets.outputs.HASH_FILE }}
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Linux GUI Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ steps.assets.outputs.LINUX_GUI_ZIP }}
+          asset_name: ${{ steps.assets.outputs.LINUX_GUI_ZIP }}
+          asset_content_type: application/zip
+
+      - name: Upload Windows GUI Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ steps.assets.outputs.WINDOWS_GUI_ZIP }}
+          asset_name: ${{ steps.assets.outputs.WINDOWS_GUI_ZIP }}
+          asset_content_type: application/zip
+
+      - name: Upload Windows Installer Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ steps.assets.outputs.WINDOWS_INSTALLER }}
+          asset_name: ${{ steps.assets.outputs.WINDOWS_INSTALLER }}
+          asset_content_type: application/vnd.microsoft.portable-executable
+
+      - name: Upload DEB Package Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ steps.assets.outputs.DEB_PACKAGE }}
+          asset_name: ${{ steps.assets.outputs.DEB_PACKAGE }}
+          asset_content_type: application/vnd.debian.binary-package
+
+      - name: Upload RPM Package Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ steps.assets.outputs.RPM_PACKAGE }}
+          asset_name: ${{ steps.assets.outputs.RPM_PACKAGE }}
+          asset_content_type: application/x-rpm
+
+      - name: Upload Hashes File Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ steps.assets.outputs.HASH_FILE }}
+          asset_name: ${{ steps.assets.outputs.HASH_FILE }}
+          asset_content_type: text/plain

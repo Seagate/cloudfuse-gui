@@ -3,7 +3,10 @@ name = "cloudfuse-gui"
 version = "0.1.0"
 description = "GUI for cloudfuse, a FUSE filesystem for S3 and Azure storage"
 authors = [
+        {name = "Leata Byers"},
         {name = "James Fantin-Hardesty"},
+        {name = "David Habinsky"},
+        {name = "Michael Habinsky"},
 ]
 license = "MIT"
 readme = "README.md"
