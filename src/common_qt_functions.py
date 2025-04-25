@@ -44,6 +44,16 @@ class defaultSettingsManager():
         self.setS3Settings(allMountSettings)
         self.setAzureSettings(allMountSettings)
         self.setComponentSettings(allMountSettings)
+    
+    def getFileCacheDir(self):
+        if platform == 'win32':
+            defaultFuseDir = 'cloudcache'
+            userDir = os.getenv('APPDATA')
+        else:
+            defaultFuseDir = '.cloudcache'
+            userDir = os.getenv('HOME')
+        workingDir = os.path.join(userDir, defaultFuseDir)
+        return workingDir
 
     def setS3Settings(self, allMountSettings):
         # REFER TO ~/setup/baseConfig.yaml for explanations of what these settings are
@@ -159,7 +169,7 @@ class defaultSettingsManager():
             }
 
         allMountSettings['file_cache'] = {
-            'path': '',
+            'path': self.getFileCacheDir(),
             'policy': 'lru',
             'timeout-sec' : 64000000,
             'max-eviction': 5000,
