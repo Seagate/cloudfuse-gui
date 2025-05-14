@@ -12,3 +12,5 @@ ui_*.py
 dist/
 **/Output/
 build/
+src/__pycache__
+cfusemon

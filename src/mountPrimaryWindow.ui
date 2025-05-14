@@ -64,17 +64,17 @@
        </widget>
       </item>
       <item>
-      <widget class="QCheckBox" name="checkBox_remount">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remount mount on server restart. If checked, mount will automatically restart when system restarts. If unchecked, then when you unmount the mount it will not automatically restart.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Remount on restart</string>
-       </property>
+       <widget class="QCheckBox" name="checkBox_remount">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remount mount on server restart. If checked, mount will automatically restart when system restarts. If unchecked, then when you unmount the mount it will not automatically restart.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Remount on restart</string>
+        </property>
         <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -141,7 +141,7 @@
      <x>0</x>
      <y>0</y>
      <width>622</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Help">
@@ -150,6 +150,7 @@
     </property>
     <addaction name="actionAbout_Qt"/>
     <addaction name="actionAbout_CloudFuse"/>
+    <addaction name="actionWheres_my_config_file"/>
    </widget>
    <addaction name="menu_Help"/>
   </widget>
@@ -177,6 +178,11 @@
   <action name="actionAbout_CloudFuse">
    <property name="text">
     <string>About Cloudfuse</string>
+   </property>
+  </action>
+  <action name="actionWheres_my_config_file">
+   <property name="text">
+    <string>Where's My Config File?</string>
    </property>
   </action>
  </widget>
