@@ -92,6 +92,7 @@ class FUSEWindow(settingsManager,configFuncs, QMainWindow, Ui_primaryFUSEwindow)
         self.button_unmount.clicked.connect(self.unmountBucket)
         self.actionAbout_Qt.triggered.connect(self.showAboutQtPage)
         self.actionAbout_CloudFuse.triggered.connect(self.showAboutCloudFusePage)
+        self.actionWheres_my_config_file.triggered.connect(self.showConfigLocation)
         self.lineEdit_mountPoint.editingFinished.connect(self.updateMountPointInSettings)
         self.dropDown_bucketSelect.currentIndexChanged.connect(self.modifyPipeline)
         if platform == 'win32':
@@ -145,6 +146,7 @@ class FUSEWindow(settingsManager,configFuncs, QMainWindow, Ui_primaryFUSEwindow)
             self.updateMountPointInSettings()
 
 
+
     # Display the pre-baked about QT messagebox
     def showAboutQtPage(self):
         QtWidgets.QMessageBox.aboutQt(self, 'About QT')
@@ -163,6 +165,11 @@ class FUSEWindow(settingsManager,configFuncs, QMainWindow, Ui_primaryFUSEwindow)
 
         self.page = aboutPage(cloudfuseVersion)
         self.page.show()
+
+    # Display where the config file is
+    def showConfigLocation(self):
+        configDir = self.getWorkingDir()
+        self.errorMessageBox(configDir, "Config Directory")
 
     def mountBucket(self):
         # get mount directory
