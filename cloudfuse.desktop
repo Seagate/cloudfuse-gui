@@ -5,4 +5,4 @@ Encoding=UTF-8
 Terminal=false
 Type=Application
 Categories=Application
-Exec=/opt/cloudfuse/cloudfuseGUI
+Exec=/usr/bin/cloudfuseGUI

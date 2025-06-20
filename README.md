@@ -65,7 +65,7 @@ manually install Cloudfuse.
 
  Open Cloudfuse from the desktop shortcut to launch it.
 If you installed Cloudfuse from an archive, run `cloudfuseGUI` from the extracted archive.
-To run the GUI from source, see instructions [here](https://github.com/Seagate/cloudfuse/wiki/Running-the-GUI-from-source).
+To run the GUI from source, see [instructions](https://github.com/Seagate/cloudfuse/wiki/Running-the-GUI-from-source).
 
 - Choose mount settings:
   - Select the desired type of cloud (Azure or S3).
@@ -114,10 +114,6 @@ WinFsp - Windows File System Proxy, Copyright (C) Bill Zissimopoulos - [link](ht
 
 We welcome your questions and feedback!
 Email us: [cloudfuse@seagate.com](mailto:cloudfuse@seagate.com).
-
-### Frequently Asked Questions
-
-A list of FAQs can be found [here](https://github.com/Seagate/cloudfuse-gui/wiki/Frequently-Asked-Questions).
 
 ### Report Issues and Request Features
 
