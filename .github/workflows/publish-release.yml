@@ -42,7 +42,7 @@ jobs:
       - name: Install the project dependencies
         run: |
           poetry install --no-root --with dev
-          pip3 install pyside6==6.9.1 --ignore-installed
+          pip3 install pyside6==6.9.1 pyinstaller==6.12.0 --ignore-installed
 
       - name: Install libxcb-cursor0 # Needed for PySide6 on some Linux runners
         if: ${{ matrix.os == 'ubuntu-latest' }}
