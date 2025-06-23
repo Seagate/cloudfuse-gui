@@ -38,21 +38,17 @@ jobs:
         run: |
           poetry config virtualenvs.create true --local
           poetry config virtualenvs.in-project true --local
-      
-      - uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3
-        name: Define a cache for the virtual environment based on the dependencies lock file
-        with:
-          path: ./.venv
-          key: venv-${{ hashFiles('poetry.lock') }}
+
       - name: Install the project dependencies
-        run: poetry install --no-root
+        run: |
+          poetry install --no-root --with dev
+          pip3 install pyside6==6.9.1 --ignore-installed
 
       - name: Install libxcb-cursor0 # Needed for PySide6 on some Linux runners
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |-
           sudo apt-get update
           sudo apt-get install -y libxcb-cursor0
-          pip3 install pyside6==6.9.1 --ignore-installed
 
       - name: Compile GUI
         shell: bash
