@@ -1,5 +1,5 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Source: https://github.com/Seagate/cloudfuse
+Source: https://github.com/Seagate/cloudfuse-gui
 
 Files: *
 Copyright: 2023-2025, Seagate Technology LLC and/or its Affiliates
