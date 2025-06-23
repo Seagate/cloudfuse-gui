@@ -5,6 +5,8 @@ on:
   push:
     tags:
       - "v*"
+    branches:
+      - update-poetry
 
 jobs:
   compile-gui:
@@ -58,7 +60,7 @@ jobs:
     needs: compile-gui
     runs-on: windows-latest
     env:
-      winfsp: winfsp-2.0.23075.msi
+      winfsp: winfsp-2.1.25156.msi
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
@@ -77,7 +79,7 @@ jobs:
         if: ${{ ! steps.restore-winfsp-installer.outputs.cache-hit }}
         shell: bash
         run: |
-          curl -LOf https://github.com/winfsp/winfsp/releases/download/v2.0/${{ env.winfsp }}
+          curl -LOf https://github.com/winfsp/winfsp/releases/download/v2.1/${{ env.winfsp }}
 
       - name: Cache WinFSP installer
         if: ${{ ! steps.restore-winfsp-installer.outputs.cache-hit }}
