@@ -1,0 +1,16 @@
+Package: cloudfuse-gui
+Architecture: amd64
+Version: 0.1.0
+Priority: optional
+Section: utils
+Maintainer: Your Name <your@email.com>
+Depends: cloudfuse, libc6 (>= 2.14)
+Filename: dists/stable/main/binary-amd64/cloudfuse-gui_0.1.0_amd64.deb
+Size: 1330670
+MD5sum: 4965021228654194f10f70ff468409fe
+SHA1: 3fd36480b6a89a0e8b26a4b34ee12e5d8d5412c5
+SHA256: c28d10b969c34db41786e7784e36e1aac25adf51cbac5b494f4c731750bad1bb
+SHA512: 6a332a9b946e87bd60470e8a1a4b3cdb82c3222b2def6a82d07fab07c89690ee7aabf565b8ec0d60cdfe4c57ea95a536c8862ab33a8b620f5675cb146510a728
+Description: Cloudfuse GUI is a graphical interface for cloudfuse.
+ An easy to use graphical interface for cloudfuse.
+
