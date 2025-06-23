@@ -52,6 +52,7 @@ jobs:
         run: |-
           sudo apt-get update
           sudo apt-get install -y libxcb-cursor0
+          pip3 install pyside6==6.9.1 --ignore-installed
 
       - name: Compile GUI
         shell: bash
