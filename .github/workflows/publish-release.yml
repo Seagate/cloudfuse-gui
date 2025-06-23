@@ -121,7 +121,7 @@ jobs:
 
       - name: Run Inno Setup
         # Build the installer and save it to actions/cache
-        working-directory: ./build
+        working-directory: ./windows
         shell: bash
         # Inno Setup is pre-installed on GitHub's windows-latest image
         # see documentation: https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md
