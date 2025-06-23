@@ -55,7 +55,6 @@ jobs:
 
       - name: Compile GUI
         shell: bash
-        working-directory: ./gui
         run: |
           ./create_gui.sh
           mv dist/cloudfuseGUI dist/cloudfuseGUI_${{ runner.os }}
