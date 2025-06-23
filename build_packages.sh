@@ -11,7 +11,7 @@ fi
 
 ARCH=$(dpkg --print-architecture)
 DEB_OUT="cloudfuse-gui_${VERSION}_${ARCH}.deb"
-RPM_OUT="cloudfuse-gui-${VERSION}-1.${ARCH}.rpm"
+RPM_OUT="cloudfuse-gui-${VERSION}-${ARCH}.rpm"
 
 # --- Build DEB ---
 rm -rf deb_build
