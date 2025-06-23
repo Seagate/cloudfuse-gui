@@ -60,9 +60,9 @@ jobs:
         uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
           enableCrossOsArchive: true
-          path: gui/dist/cloudfuseGUI_${{ runner.os }}
+          path: dist/cloudfuseGUI_${{ runner.os }}
           # Use a consistent, specific key including spec and requirements
-          key: ${{ runner.os }}-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
+          key: ${{ runner.os }}-compiled-gui-${{ hashFiles('src/*.ui', 'src/*.py', 'poetry.lock', 'cloudfuse_gui.spec') }}
 
   create-installer:
     # Run Inno Setup to create the Windows app installer, then write it to actions/cache
@@ -104,9 +104,9 @@ jobs:
         uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
           enableCrossOsArchive: true
-          path: gui/dist/cloudfuseGUI_${{ runner.os }}
+          path: dist/cloudfuseGUI_${{ runner.os }}
           # Use the same key as the save step in compile-gui
-          key: ${{ runner.os }}-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
+          key: ${{ runner.os }}-compiled-gui-${{ hashFiles('src/*.ui', 'src/*.py', 'poetry.lock', 'cloudfuse_gui.spec') }}
           fail-on-cache-miss: true
         # don't continue if we fail get the compiled GUI for the Windows installer
         continue-on-error: false
@@ -163,16 +163,16 @@ jobs:
       - name: Restore Linux compiled GUI
         uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
-          path: gui/dist/cloudfuseGUI_Linux
-          key: Linux-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
+          path: dist/cloudfuseGUI_Linux
+          key: Linux-compiled-gui-${{ hashFiles('src/*.ui', 'src/*.py', 'poetry.lock', 'cloudfuse_gui.spec') }}
           fail-on-cache-miss: true
 
       - name: Restore Windows compiled GUI
         uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
           enableCrossOsArchive: true
-          path: gui/dist/cloudfuseGUI_Windows
-          key: Windows-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
+          path: dist/cloudfuseGUI_Windows
+          key: Windows-compiled-gui-${{ hashFiles('src/*.ui', 'src/*.py', 'poetry.lock', 'cloudfuse_gui.spec') }}
           fail-on-cache-miss: true
 
       - name: Restore Windows Installer
@@ -202,15 +202,15 @@ jobs:
 
       - name: Zip Linux GUI artifact
         run: |
-          zip -r ${{ steps.assets.outputs.LINUX_GUI_ZIP }} gui/dist/cloudfuseGUI_Linux
+          zip -r ${{ steps.assets.outputs.LINUX_GUI_ZIP }} dist/cloudfuseGUI_Linux
 
       - name: Zip Windows GUI artifact
         run: |
-          zip -r ${{ steps.assets.outputs.WINDOWS_GUI_ZIP }} gui/dist/cloudfuseGUI_Windows
+          zip -r ${{ steps.assets.outputs.WINDOWS_GUI_ZIP }} dist/cloudfuseGUI_Windows
 
       - name: Prepare DEB and RPM package
         run: |
-          ./build_packages.sh ${{ steps.get_version.outputs.VERSION }} gui/dist/cloudfuseGUI_Linux
+          ./build_packages.sh ${{ steps.get_version.outputs.VERSION }} dist/cloudfuseGUI_Linux
       
       - name: Calculate Hashes
         shell: bash
