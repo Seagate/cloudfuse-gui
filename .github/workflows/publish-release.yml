@@ -70,7 +70,7 @@ jobs:
           enableCrossOsArchive: true
           path: dist/cloudfuseGUI_${{ runner.os }}
           # Use a consistent, specific key including spec and requirements
-          key: ${{ runner.os }}-compiled-gui--${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
+          key: ${{ runner.os }}-compiled-gui-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
 
   create-installer:
     # Run Inno Setup to create the Windows app installer, then write it to actions/cache
