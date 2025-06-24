@@ -127,7 +127,7 @@ jobs:
         # see documentation: https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md
         run: |
           # Pass version to Inno Setup via command line define
-          "C:/Program Files (x86)/Inno Setup 6/iscc.exe" /DAppVersion=${{ steps.get_version.outputs.VERSION }} windows_installer_build.iss
+          "C:/Program Files (x86)/Inno Setup 6/iscc.exe" //DAppVersion=${{ steps.get_version.outputs.VERSION }} windows_installer_build.iss
 
       - name: Rename installer
         shell: bash
