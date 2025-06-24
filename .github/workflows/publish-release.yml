@@ -132,12 +132,12 @@ jobs:
       - name: Rename installer
         shell: bash
         run: |
-          mv build/Output/cloudfuse.exe build/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
+          mv windows/Output/cloudfuse.exe windows/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
 
       - name: Cache windows installer
         uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
-          path: build/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
+          path: windows/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
           key: windows-cloudfuse-installer-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
 
   release:
