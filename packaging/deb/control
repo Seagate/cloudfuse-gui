@@ -4,6 +4,6 @@ Section: utils
 Priority: optional
 Architecture: amd64
 Depends: cloudfuse, libc6 (>= 2.14)
-Maintainer: Your Name <your@email.com>
+Maintainer: Seagate Technology <cloudfuse@seagate.com>
 Description: Cloudfuse GUI is a graphical interface for cloudfuse.
  An easy to use graphical interface for cloudfuse.
