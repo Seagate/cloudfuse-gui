@@ -122,7 +122,7 @@ jobs:
           enableCrossOsArchive: true
           path: dist/cloudfuseGUI_${{ runner.os }}
           # Use the same key as the save step in compile-gui
-          key: ${{ runner.os }}-compiled-gui--${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
+          key: ${{ runner.os }}-compiled-gui-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
         # don't continue if we fail get the compiled GUI for the Windows installer
         continue-on-error: false
@@ -173,7 +173,7 @@ jobs:
         uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
           path: dist/cloudfuseGUI_Linux
-          key: Linux-compiled-gui--${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
+          key: Linux-compiled-gui-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: Restore Windows compiled GUI
@@ -181,7 +181,7 @@ jobs:
         with:
           enableCrossOsArchive: true
           path: dist/cloudfuseGUI_Windows
-          key: Windows-compiled-gui--${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
+          key: Windows-compiled-gui-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: Restore Windows Installer
@@ -190,7 +190,7 @@ jobs:
         with:
           enableCrossOsArchive: true
           path: ./cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe # Restore to root
-          key: windows-cloudfuse-installer--${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
+          key: windows-cloudfuse-installer-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: Install Packaging Tools
