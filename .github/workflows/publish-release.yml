@@ -26,6 +26,14 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Set Version
+        id: get_version
+        shell: bash
+        # Use GITHUB_OUTPUT for setting output variables
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+
       - name: Install Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
@@ -42,7 +50,7 @@ jobs:
       - name: Install the project dependencies
         run: |
           poetry install --no-root --with dev
-          pip3 install pyside6==6.9.1 pyinstaller==6.12.0 --ignore-installed
+          pip3 install pyside6==6.9.1 pyinstaller==6.14.0 --ignore-installed
 
       - name: Install libxcb-cursor0 # Needed for PySide6 on some Linux runners
         if: ${{ matrix.os == 'ubuntu-latest' }}
@@ -62,7 +70,7 @@ jobs:
           enableCrossOsArchive: true
           path: dist/cloudfuseGUI_${{ runner.os }}
           # Use a consistent, specific key including spec and requirements
-          key: ${{ runner.os }}-compiled-gui-${{ hashFiles('src/*.ui', 'src/*.py', 'poetry.lock', 'cloudfuse_gui.spec') }}
+          key: ${{ runner.os }}-compiled-gui--${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
 
   create-installer:
     # Run Inno Setup to create the Windows app installer, then write it to actions/cache
@@ -78,6 +86,14 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+
+      - name: Set Version
+        id: get_version
+        shell: bash
+        # Use GITHUB_OUTPUT for setting output variables
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
 
         # Get the WinFSP installer (from cache or download)
       - name: Get cached WinFSP installer
@@ -106,18 +122,10 @@ jobs:
           enableCrossOsArchive: true
           path: dist/cloudfuseGUI_${{ runner.os }}
           # Use the same key as the save step in compile-gui
-          key: ${{ runner.os }}-compiled-gui-${{ hashFiles('src/*.ui', 'src/*.py', 'poetry.lock', 'cloudfuse_gui.spec') }}
+          key: ${{ runner.os }}-compiled-gui--${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
         # don't continue if we fail get the compiled GUI for the Windows installer
         continue-on-error: false
-
-      - name: Set Version
-        id: get_version
-        shell: bash
-        # Use GITHUB_OUTPUT for setting output variables
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_REF_NAME: ${{ github.ref_name }}
 
       - name: Run Inno Setup
         # Build the installer and save it to actions/cache
@@ -164,7 +172,7 @@ jobs:
         uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
           path: dist/cloudfuseGUI_Linux
-          key: Linux-compiled-gui-${{ hashFiles('src/*.ui', 'src/*.py', 'poetry.lock', 'cloudfuse_gui.spec') }}
+          key: Linux-compiled-gui--${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: Restore Windows compiled GUI
@@ -172,7 +180,7 @@ jobs:
         with:
           enableCrossOsArchive: true
           path: dist/cloudfuseGUI_Windows
-          key: Windows-compiled-gui-${{ hashFiles('src/*.ui', 'src/*.py', 'poetry.lock', 'cloudfuse_gui.spec') }}
+          key: Windows-compiled-gui--${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: Restore Windows Installer
