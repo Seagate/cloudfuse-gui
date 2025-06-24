@@ -145,6 +145,7 @@ jobs:
       - name: Cache windows installer
         uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
+          enableCrossOsArchive: true
           path: windows/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
           key: windows-cloudfuse-installer-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
 
@@ -187,8 +188,9 @@ jobs:
         id: restore-installer
         uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
+          enableCrossOsArchive: true
           path: ./cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe # Restore to root
-          key: windows-cloudfuse-installer-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
+          key: windows-cloudfuse-installer--${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: Install Packaging Tools
