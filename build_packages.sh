@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-VERSION="$1"
+VERSION="0.1.0"
 LINUX_GUI_BIN="$2"
 
 if [[ -z "$VERSION" || -z "$LINUX_GUI_BIN" ]]; then
@@ -22,8 +22,6 @@ mkdir -p deb_build/usr/share/applications
 mkdir -p deb_build/usr/share/doc/cloudfuse-gui
 
 cp -r "$LINUX_GUI_BIN"/* deb_build/usr/lib/cloudfuse-gui
-chmod +x deb_build/usr/lib/cloudfuse-gui/cloudfuseGUI
-ln -s "deb_build/usr/lib/cloudfuse-gui/cloudfuseGUI" "deb_build/usr/bin/cloudfuse-gui"
 
 # Substitute version and ensure Depends: cloudfuse is present
 sed "s/@@VERSION@@/${VERSION}/g" packaging/deb/control >  deb_build/DEBIAN/control
@@ -37,6 +35,9 @@ find deb_build/usr/lib/cloudfuse-gui -type f \( -name "*.so*" -o -executable \) 
 # Fix all directory and file permissions
 find deb_build -type d -exec chmod 0755 {} +
 find deb_build -type f -exec chmod 0644 {} +
+
+chmod +x deb_build/usr/lib/cloudfuse-gui/cloudfuseGUI
+ln -s "../lib/cloudfuse-gui/cloudfuseGUI" "deb_build/usr/bin/cloudfuse-gui"
 
 fakeroot dpkg-deb --build deb_build "$DEB_OUT"
 
