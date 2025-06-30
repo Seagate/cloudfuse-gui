@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-VERSION="0.1.0"
+VERSION="$1"
 LINUX_GUI_BIN="$2"
 
 if [[ -z "$VERSION" || -z "$LINUX_GUI_BIN" ]]; then

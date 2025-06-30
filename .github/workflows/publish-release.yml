@@ -5,8 +5,6 @@ on:
   push:
     tags:
       - "v*"
-    branches:
-      - update-poetry
 
 jobs:
   compile-gui:
@@ -207,8 +205,8 @@ jobs:
           echo "LINUX_GUI_ZIP=cloudfuseGUI_${VERSION}_linux_amd64.zip" >> $GITHUB_OUTPUT
           echo "WINDOWS_GUI_ZIP=cloudfuseGUI_${VERSION}_windows_amd64.zip" >> $GITHUB_OUTPUT
           echo "WINDOWS_INSTALLER=windows/Output/cloudfuse_${VERSION}_windows_amd64.exe" >> $GITHUB_OUTPUT
-          echo "DEB_PACKAGE=cloudfuse-gui_0.1.0_${ARCH}.deb" >> $GITHUB_OUTPUT
-          echo "RPM_PACKAGE=cloudfuse-gui-0.1.0-${ARCH}.rpm" >> $GITHUB_OUTPUT
+          echo "DEB_PACKAGE=cloudfuse-gui_${VERSION}_${ARCH}.deb" >> $GITHUB_OUTPUT
+          echo "RPM_PACKAGE=cloudfuse-gui-${VERSION}-${ARCH}.rpm" >> $GITHUB_OUTPUT
           echo "HASH_FILE=sha256sums.txt" >> $GITHUB_OUTPUT
 
       - name: Zip Linux GUI artifact
