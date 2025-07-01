@@ -41,15 +41,82 @@ Download and run the .exe installer from our latest release [here](https://githu
 
 #### Debian /Ubuntu
 
-Download the .deb file from our latest release [here](https://github.com/Seagate/cloudfuse-gui/releases) and run the following command in your terminal:
+##### Using Release on GitHub
+
+Download the cloudfuse .deb file from our latest release [here](https://github.com/Seagate/cloudfuse/releases) and run the following command in your terminal:
+
+`sudo apt-get install ./cloudfuse*.deb`
+
+Download the cloudfuse-gui .deb file from our latest release [here](https://github.com/Seagate/cloudfuse-gui/releases) and run the following command in your terminal:
 
 `sudo apt-get install ./cloudfuse-gui*.deb`
 
-#### CentOS / RHEL
+##### Using APT Repository
 
-Download the .rpm file from our latest release [here](https://github.com/Seagate/cloudfuse-gui/releases) and run the following command in your terminal:
+1. **Add the GPG key for the repository:**
+
+    ```bash
+    sudo apt-get update
+    sudo apt-get install -y curl gpg
+    curl -fsSL https://seagate.github.io/cloudfuse/public.key | sudo gpg --dearmor -o /usr/share/keyrings/cloudfuse-archive-keyring.gpg
+    ```
+
+2. **Add the repository to your APT sources:**
+
+    ```bash
+    echo "deb [signed-by=/usr/share/keyrings/cloudfuse-archive-keyring.gpg] https://seagate.github.io/cloudfuse stable main" | sudo tee /etc/apt/sources.list.d/cloudfuse.list > /dev/null
+    echo "deb [signed-by=/usr/share/keyrings/cloudfuse-archive-keyring.gpg] https://seagate.github.io/cloudfuse-gui stable main" | sudo tee /etc/apt/sources.list.d/cloudfuse.list > /dev/null
+    ```
+
+3. **Install `cloudfuse-gui`:**
+
+    ```bash
+    sudo apt-get update
+    sudo apt-get install cloudfuse-gui
+    ```
+
+#### Fedora / RHEL
+
+##### Using Release on GitHub
+
+Download the cloudfuse .rpm file from our latest release [here](https://github.com/Seagate/cloudfuse/releases) and run the following command in your terminal:
+
+`sudo rpm -i ./cloudfuse*.rpm`
+
+Download the cloudfuse-gui .rpm file from our latest release [here](https://github.com/Seagate/cloudfuse-gui/releases) and run the following command in your terminal:
 
 `sudo rpm -i ./cloudfuse-gui*.rpm`
+
+##### Using YUM/DNF Repository
+
+1. **Add the `cloudfuse` repository:**
+
+    ```bash
+    sudo tee /etc/yum.repos.d/cloudfuse.repo <<EOF
+    [cloudfuse]
+    name=cloudfuse Repository
+    baseurl=https://seagate.github.io/cloudfuse/rpm-repo/
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://seagate.github.io/cloudfuse/public.key
+    [cloudfuse-gui]
+    name=cloudfuse-gui Repository
+    baseurl=https://seagate.github.io/cloudfuse-gui/rpm-repo/
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://seagate.github.io/cloudfuse-gui/public.key
+    EOF
+    ```
+
+2. **Install `cloudfuse`:**
+
+    ```bash
+    # For Fedora, RHEL 8+
+    sudo dnf install cloudfuse-gui
+
+    # For RHEL 7
+    sudo yum install cloudfuse-gui
+    ```
 
 ### From Archive
 
@@ -65,7 +132,7 @@ manually install Cloudfuse.
 
  Open Cloudfuse from the desktop shortcut to launch it.
 If you installed Cloudfuse from an archive, run `cloudfuseGUI` from the extracted archive.
-To run the GUI from source, see instructions [here](https://github.com/Seagate/cloudfuse/wiki/Running-the-GUI-from-source).
+To run the GUI from source, see [instructions](https://github.com/Seagate/cloudfuse/wiki/Running-the-GUI-from-source).
 
 - Choose mount settings:
   - Select the desired type of cloud (Azure or S3).
@@ -114,10 +181,6 @@ WinFsp - Windows File System Proxy, Copyright (C) Bill Zissimopoulos - [link](ht
 
 We welcome your questions and feedback!
 Email us: [cloudfuse@seagate.com](mailto:cloudfuse@seagate.com).
-
-### Frequently Asked Questions
-
-A list of FAQs can be found [here](https://github.com/Seagate/cloudfuse-gui/wiki/Frequently-Asked-Questions).
 
 ### Report Issues and Request Features
 

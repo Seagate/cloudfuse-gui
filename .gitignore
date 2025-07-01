@@ -12,5 +12,6 @@ ui_*.py
 dist/
 **/Output/
 build/
+dist/
 src/__pycache__
 cfusemon

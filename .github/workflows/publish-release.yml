@@ -14,90 +14,15 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
-
-      - name: Install Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install pip dependencies and PyInstaller
-        run: |
-          pip3 install --upgrade pip
-          pip3 install -r gui/requirements.txt pyinstaller # Install pyinstaller here
-        shell: bash
-
-      - name: Install libxcb-cursor0 # Needed for PySide6 on some Linux runners
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: |-
-          sudo apt-get update
-          sudo apt-get install -y libxcb-cursor0
-
-      - name: Compile GUI
-        shell: bash
-        working-directory: ./gui
-        run: |
-          ./create_gui.sh
-          mv dist/cloudfuseGUI dist/cloudfuseGUI_${{ runner.os }}
-
-      - name: Cache compiled GUI
-        uses: actions/cache/save@v4
-        with:
-          enableCrossOsArchive: true
-          path: gui/dist/cloudfuseGUI_${{ runner.os }}
-          # Use a consistent, specific key including spec and requirements
-          key: ${{ runner.os }}-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
-
-  create-installer:
-    # Run Inno Setup to create the Windows app installer, then write it to actions/cache
-    name: Create Windows Installer
-    needs: compile-gui
-    runs-on: windows-latest
-    env:
-      go: "1.24"
-      cgo: "0"
-      winfsp: winfsp-2.0.23075.msi
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-        # Get the WinFSP installer (from cache or download)
-      - name: Get cached WinFSP installer
-        id: restore-winfsp-installer
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.winfsp }}
-          key: ${{ env.winfsp }}
-
-      - name: Download WinFSP installer
-        if: ${{ ! steps.restore-winfsp-installer.outputs.cache-hit }}
-        shell: bash
-        run: |
-          curl -LOf https://github.com/winfsp/winfsp/releases/download/v2.0/${{ env.winfsp }}
-
-      - name: Cache WinFSP installer
-        if: ${{ ! steps.restore-winfsp-installer.outputs.cache-hit }}
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ env.winfsp }}
-          key: ${{ env.winfsp }}
-
-      - name: Fetch cached compiled GUI
-        uses: actions/cache/restore@v4
-        with:
-          enableCrossOsArchive: true
-          path: gui/dist/cloudfuseGUI_${{ runner.os }}
-          # Use the same key as the save step in compile-gui
-          key: ${{ runner.os }}-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
-          fail-on-cache-miss: true
-        # don't continue if we fail get the compiled GUI for the Windows installer
-        continue-on-error: false
 
       - name: Set Version
         id: get_version
@@ -107,25 +32,119 @@ jobs:
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
 
+      - name: Install Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+
+      - name: Install poetry
+        uses: abatilo/actions-poetry@0dd19c9498c3dc8728967849d0d2eae428a8a3d8 # v4
+      
+      - name: Setup a local virtual environment
+        run: |
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+
+      - name: Install the project dependencies
+        run: |
+          poetry install --no-root --with dev
+          pip3 install pyside6==6.9.1 pyinstaller==6.14.0 --ignore-installed
+
+      - name: Install libxcb-cursor0 # Needed for PySide6 on some Linux runners
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |-
+          sudo apt-get update
+          sudo apt-get install -y libxcb-cursor0
+
+      - name: Compile GUI
+        shell: bash
+        run: |
+          ./create_gui.sh
+          mv dist/cloudfuseGUI dist/cloudfuseGUI_${{ runner.os }}
+
+      - name: Cache compiled GUI
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          enableCrossOsArchive: true
+          path: dist/cloudfuseGUI_${{ runner.os }}
+          # Use a consistent, specific key including spec and requirements
+          key: ${{ runner.os }}-compiled-gui-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
+
+  create-installer:
+    # Run Inno Setup to create the Windows app installer, then write it to actions/cache
+    name: Create Windows Installer
+    needs: compile-gui
+    runs-on: windows-latest
+    env:
+      winfsp: winfsp-2.1.25156.msi
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set Version
+        id: get_version
+        shell: bash
+        # Use GITHUB_OUTPUT for setting output variables
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+
+        # Get the WinFSP installer (from cache or download)
+      - name: Get cached WinFSP installer
+        id: restore-winfsp-installer
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: ${{ env.winfsp }}
+          key: ${{ env.winfsp }}
+
+      - name: Download WinFSP installer
+        if: ${{ ! steps.restore-winfsp-installer.outputs.cache-hit }}
+        shell: bash
+        run: |
+          curl -LOf https://github.com/winfsp/winfsp/releases/download/v2.1/${{ env.winfsp }}
+
+      - name: Cache WinFSP installer
+        if: ${{ ! steps.restore-winfsp-installer.outputs.cache-hit }}
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: ${{ env.winfsp }}
+          key: ${{ env.winfsp }}
+
+      - name: Fetch cached compiled GUI
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          enableCrossOsArchive: true
+          path: dist/cloudfuseGUI_${{ runner.os }}
+          # Use the same key as the save step in compile-gui
+          key: ${{ runner.os }}-compiled-gui-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
+          fail-on-cache-miss: true
+        # don't continue if we fail get the compiled GUI for the Windows installer
+        continue-on-error: false
+
       - name: Run Inno Setup
         # Build the installer and save it to actions/cache
-        working-directory: ./build
+        working-directory: ./windows
         shell: bash
         # Inno Setup is pre-installed on GitHub's windows-latest image
         # see documentation: https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md
         run: |
           # Pass version to Inno Setup via command line define
-          "C:/Program Files (x86)/Inno Setup 6/iscc.exe" /DAppVersion=${{ steps.get_version.outputs.VERSION }} windows_installer_build.iss
+          "C:/Program Files (x86)/Inno Setup 6/iscc.exe" //DAppVersion=${{ steps.get_version.outputs.VERSION }} windows_installer_build.iss
 
       - name: Rename installer
         shell: bash
         run: |
-          mv build/Output/cloudfuse.exe build/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
+          mv windows/Output/cloudfuse.exe windows/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
 
       - name: Cache windows installer
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
-          path: build/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
+          enableCrossOsArchive: true
+          path: windows/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
           key: windows-cloudfuse-installer-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
 
   release:
@@ -138,7 +157,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
 
@@ -149,25 +168,26 @@ jobs:
           GITHUB_REF_NAME: ${{ github.ref_name }}
 
       - name: Restore Linux compiled GUI
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
-          path: gui/dist/cloudfuseGUI_Linux
-          key: Linux-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
+          path: dist/cloudfuseGUI_Linux
+          key: Linux-compiled-gui-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: Restore Windows compiled GUI
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
           enableCrossOsArchive: true
-          path: gui/dist/cloudfuseGUI_Windows
-          key: Windows-compiled-gui-${{ hashFiles('gui/*.ui', 'gui/*.py', 'gui/requirements.txt', 'gui/cloudfuse_gui.spec') }}
+          path: dist/cloudfuseGUI_Windows
+          key: Windows-compiled-gui-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: Restore Windows Installer
         id: restore-installer
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
-          path: ./cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe # Restore to root
+          enableCrossOsArchive: true
+          path: windows/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe 
           key: windows-cloudfuse-installer-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
 
@@ -181,58 +201,26 @@ jobs:
         shell: bash
         run: |
           VERSION=${{ steps.get_version.outputs.VERSION }}
-          ARCH=$(dpkg --print-architecture) # Get architecture for deb/rpm naming
+          ARCH=$(dpkg --print-architecture)
           echo "LINUX_GUI_ZIP=cloudfuseGUI_${VERSION}_linux_amd64.zip" >> $GITHUB_OUTPUT
           echo "WINDOWS_GUI_ZIP=cloudfuseGUI_${VERSION}_windows_amd64.zip" >> $GITHUB_OUTPUT
+          echo "WINDOWS_INSTALLER=windows/Output/cloudfuse_${VERSION}_windows_amd64.exe" >> $GITHUB_OUTPUT
           echo "DEB_PACKAGE=cloudfuse-gui_${VERSION}_${ARCH}.deb" >> $GITHUB_OUTPUT
-          echo "RPM_PACKAGE=cloudfuse-gui-${VERSION}-1.${ARCH}.rpm" >> $GITHUB_OUTPUT # RPM versioning often includes a release number (e.g., -1)
+          echo "RPM_PACKAGE=cloudfuse-gui-${VERSION}-${ARCH}.rpm" >> $GITHUB_OUTPUT
           echo "HASH_FILE=sha256sums.txt" >> $GITHUB_OUTPUT
 
       - name: Zip Linux GUI artifact
         run: |
-          cd gui/dist
-          zip -r ../../${{ steps.assets.outputs.LINUX_GUI_ZIP }} cloudfuseGUI_Linux
-          cd ../..
+          zip -r ${{ steps.assets.outputs.LINUX_GUI_ZIP }} dist/cloudfuseGUI_Linux
 
       - name: Zip Windows GUI artifact
         run: |
-          cd gui/dist
-          zip -r ../../${{ steps.assets.outputs.WINDOWS_GUI_ZIP }} cloudfuseGUI_Windows
-          cd ../..
+          zip -r ${{ steps.assets.outputs.WINDOWS_GUI_ZIP }} dist/cloudfuseGUI_Windows
 
-      # --- Build DEB Package ---
-      - name: Prepare DEB structure
+      - name: Prepare DEB and RPM package
         run: |
-          mkdir -p deb_build/DEBIAN
-          mkdir -p deb_build/usr/bin
-          mkdir -p deb_build/usr/share/applications
-          cp gui/dist/cloudfuseGUI_Linux deb_build/usr/bin/cloudfuseGUI
-          chmod +x deb_build/usr/bin/cloudfuseGUI
-          # Copy control file and replace version
-          sed "s/@@VERSION@@/${{ steps.get_version.outputs.VERSION }}/g" packaging/deb/control > deb_build/DEBIAN/control
-          # Copy desktop entry and icon (adjust paths if needed)
-          cp packaging/common/cloudfuse-gui.desktop deb_build/usr/share/applications/
-
-      - name: Build DEB package
-        run: fakeroot dpkg-deb --build deb_build ${{ steps.assets.outputs.DEB_PACKAGE }}
-
-      # --- Build RPM Package ---
-      - name: Prepare RPM build environment
-        run: |
-          mkdir -p rpm_build/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          cp gui/dist/cloudfuseGUI_Linux rpm_build/SOURCES/cloudfuseGUI
-          # Copy other sources if needed by spec file
-          cp packaging/common/cloudfuse-gui.desktop rpm_build/SOURCES/
-          cp packaging/common/cloudfuse-gui.svg rpm_build/SOURCES/
-          # Copy spec file and replace version
-          sed "s/@@VERSION@@/${{ steps.get_version.outputs.VERSION }}/g" packaging/rpm/cloudfuse-gui.spec > rpm_build/SPECS/cloudfuse-gui.spec
-
-      - name: Build RPM package
-        run: |
-          rpmbuild -bb --define "_topdir $(pwd)/rpm_build" --define "dist .$(lsb_release -cs)" rpm_build/SPECS/cloudfuse-gui.spec
-          # Find the built RPM and move/rename it
-          find rpm_build/RPMS -name '*.rpm' -exec mv {} ${{ steps.assets.outputs.RPM_PACKAGE }} \;
-
+          ./build_packages.sh ${{ steps.get_version.outputs.VERSION }} dist/cloudfuseGUI_Linux
+      
       - name: Calculate Hashes
         shell: bash
         run: |
@@ -241,73 +229,94 @@ jobs:
           sha256sum ${{ steps.assets.outputs.DEB_PACKAGE }} >> ${{ steps.assets.outputs.HASH_FILE }}
           sha256sum ${{ steps.assets.outputs.RPM_PACKAGE }} >> ${{ steps.assets.outputs.HASH_FILE }}
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub Release and Upload Assets
+        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref_name }}
-          draft: false
-          prerelease: false
+          files: |
+            ${{ steps.assets.outputs.LINUX_GUI_ZIP }}
+            ${{ steps.assets.outputs.WINDOWS_GUI_ZIP }}
+            ${{ steps.assets.outputs.WINDOWS_INSTALLER }}
+            ${{ steps.assets.outputs.DEB_PACKAGE }}
+            ${{ steps.assets.outputs.RPM_PACKAGE }}
+            ${{ steps.assets.outputs.HASH_FILE }}
+          fail_on_unmatched_files: true
 
-      - name: Upload Linux GUI Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ steps.assets.outputs.LINUX_GUI_ZIP }}
-          asset_name: ${{ steps.assets.outputs.LINUX_GUI_ZIP }}
-          asset_content_type: application/zip
+  update-package-repos:
+    name: Update APT & RPM Repositories
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
-      - name: Upload Windows GUI Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ steps.assets.outputs.WINDOWS_GUI_ZIP }}
-          asset_name: ${{ steps.assets.outputs.WINDOWS_GUI_ZIP }}
-          asset_content_type: application/zip
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y createrepo-c
 
-      - name: Upload Windows Installer Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ steps.assets.outputs.WINDOWS_INSTALLER }}
-          asset_name: ${{ steps.assets.outputs.WINDOWS_INSTALLER }}
-          asset_content_type: application/vnd.microsoft.portable-executable
+          ref: gh-pages
+          path: gh-pages
+          persist-credentials: true
 
-      - name: Upload DEB Package Asset
-        uses: actions/upload-release-asset@v1
+      - name: Download .deb and .rpm packages from release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ steps.assets.outputs.DEB_PACKAGE }}
-          asset_name: ${{ steps.assets.outputs.DEB_PACKAGE }}
-          asset_content_type: application/vnd.debian.binary-package
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          mkdir ./packages
+          gh release download $TAG --dir ./packages -p "*.deb"
+          gh release download $TAG --dir ./packages -p "*.rpm"
 
-      - name: Upload RPM Package Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6.3.0
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ steps.assets.outputs.RPM_PACKAGE }}
-          asset_name: ${{ steps.assets.outputs.RPM_PACKAGE }}
-          asset_content_type: application/x-rpm
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          
+      - name: Update APT repository
+        working-directory: ./gh-pages
+        run: |
+          # Move new .deb files into the repository
+          find ../packages -name "*_amd64.deb" -exec mv {} dists/stable/main/binary-amd64/ \;
+          # Generate Packages metadata
+          apt-ftparchive packages dists/stable/main/binary-amd64 > dists/stable/main/binary-amd64/Packages
+          gzip -k -f dists/stable/main/binary-amd64/Packages
+          # Generate and sign the Release file
+          apt-ftparchive \
+            -o APT::FTPArchive::Release::Origin="Seagate Technology" \
+            -o APT::FTPArchive::Release::Label="cloudfuse-gui" \
+            -o APT::FTPArchive::Release::Suite="stable" \
+            -o APT::FTPArchive::Release::Codename="stable" \
+            -o APT::FTPArchive::Release::Architectures="amd64" \
+            -o APT::FTPArchive::Release::Components="main" \
+            -o APT::FTPArchive::Release::Description="APT repository for cloudfuse-gui" \
+            release dists/stable > dists/stable/Release
+          gpg --clearsign -u "${{ steps.import_gpg.outputs.fingerprint }}" --batch --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" -o dists/stable/InRelease dists/stable/Release
+          gpg -u "${{ steps.import_gpg.outputs.fingerprint }}" --batch --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" -abs -o dists/stable/Release.gpg dists/stable/Release
 
-      - name: Upload Hashes File Asset
-        uses: actions/upload-release-asset@v1
+      - name: Update RPM repository
+        working-directory: ./gh-pages
+        run: |
+          # Move new .rpm files
+          find ../packages -name "*.rpm" -exec mv {} rpm-repo/ \;
+          # Create/update repository metadata
+          createrepo_c --database rpm-repo/
+          # Sign the repository metadata
+          gpg --detach-sign --armor -u "${{ steps.import_gpg.outputs.fingerprint }}" --batch --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" rpm/repodata/repomd.xml
+
+      - name: Commit and push repository updates
+        working-directory: ./gh-pages
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ steps.assets.outputs.HASH_FILE }}
-          asset_name: ${{ steps.assets.outputs.HASH_FILE }}
-          asset_content_type: text/plain
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          if git diff-index --quiet HEAD; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update APT & RPM repositories for release ${GITHUB_REF_NAME}"
+            git push
+          fi

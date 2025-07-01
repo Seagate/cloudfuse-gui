@@ -7,7 +7,7 @@
 #define MyAppPublisher "SEAGATE TECHNOLOGY LLC"
 #define MyAppURL "https://github.com/Seagate/cloudfuse-gui"
 #define MyAppExeName "cloudfuseGUI.exe"
-#define WinFSPInstaller "winfsp-2.0.23075.msi"
+#define WinFSPInstaller "winfsp-2.1.25156.msi"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
