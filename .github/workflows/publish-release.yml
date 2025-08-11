@@ -63,7 +63,7 @@ jobs:
           mv dist/cloudfuseGUI dist/cloudfuseGUI_${{ runner.os }}
 
       - name: Cache compiled GUI
-        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         with:
           enableCrossOsArchive: true
           path: dist/cloudfuseGUI_${{ runner.os }}
@@ -96,7 +96,7 @@ jobs:
         # Get the WinFSP installer (from cache or download)
       - name: Get cached WinFSP installer
         id: restore-winfsp-installer
-        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         with:
           path: ${{ env.winfsp }}
           key: ${{ env.winfsp }}
@@ -109,13 +109,13 @@ jobs:
 
       - name: Cache WinFSP installer
         if: ${{ ! steps.restore-winfsp-installer.outputs.cache-hit }}
-        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         with:
           path: ${{ env.winfsp }}
           key: ${{ env.winfsp }}
 
       - name: Fetch cached compiled GUI
-        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         with:
           enableCrossOsArchive: true
           path: dist/cloudfuseGUI_${{ runner.os }}
@@ -141,7 +141,7 @@ jobs:
           mv windows/Output/cloudfuse.exe windows/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
 
       - name: Cache windows installer
-        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         with:
           enableCrossOsArchive: true
           path: windows/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
@@ -168,14 +168,14 @@ jobs:
           GITHUB_REF_NAME: ${{ github.ref_name }}
 
       - name: Restore Linux compiled GUI
-        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         with:
           path: dist/cloudfuseGUI_Linux
           key: Linux-compiled-gui-${{ steps.get_version.outputs.VERSION }}-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: Restore Windows compiled GUI
-        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         with:
           enableCrossOsArchive: true
           path: dist/cloudfuseGUI_Windows
@@ -184,7 +184,7 @@ jobs:
 
       - name: Restore Windows Installer
         id: restore-installer
-        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         with:
           enableCrossOsArchive: true
           path: windows/Output/cloudfuse_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe 
