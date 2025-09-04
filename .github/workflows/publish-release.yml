@@ -306,12 +306,19 @@ jobs:
       - name: Update RPM repository
         working-directory: ./gh-pages
         run: |
+          set -euo pipefail
           # Move new .rpm files
           find ../packages -name "*.rpm" -exec mv {} rpm-repo/ \;
           # Create/update repository metadata
           createrepo_c --database rpm-repo/
-          # Sign the repository metadata
-          gpg --detach-sign --armor -u "${{ steps.import_gpg.outputs.fingerprint }}" --batch --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" rpm-repo/repodata/repomd.xml
+          # Remove old signatures to avoid "File exists"
+          rm -f rpm-repo/repodata/repomd.xml.asc rpm-repo/repodata/repomd.xml.gpg
+          # Sign the repository metadata (detached armored signature)
+          gpg --batch --yes --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" \
+             -u "${{ steps.import_gpg.outputs.fingerprint }}" \
+             --detach-sign --armor \
+             -o rpm-repo/repodata/repomd.xml.asc \
+             rpm-repo/repodata/repomd.xml
 
       - name: Commit and push repository updates
         working-directory: ./gh-pages
