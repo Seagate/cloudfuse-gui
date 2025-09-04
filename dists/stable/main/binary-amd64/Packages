@@ -30,3 +30,19 @@ SHA512: a8efe59fff22feb83c366b17f3798f4ee68391f15018a68a98080caf20174aec53906910
 Description: Cloudfuse GUI is a graphical interface for cloudfuse.
  An easy to use graphical interface for cloudfuse.
 
+Package: cloudfuse-gui
+Architecture: amd64
+Version: 1.0.2
+Priority: optional
+Section: utils
+Maintainer: Seagate Technology <cloudfuse@seagate.com>
+Depends: cloudfuse, libc6 (>= 2.14)
+Filename: dists/stable/main/binary-amd64/cloudfuse-gui_1.0.2_amd64.deb
+Size: 51827822
+MD5sum: 7b8d42553509e8bed564df4fed1a2407
+SHA1: 3a5067d2e2d1a7f7c745a851ef448f37bbffd610
+SHA256: 8f0dfce0caf500a49b90ba67cab511e705f4bb5eaea345bf33578fdcf945886a
+SHA512: 832e26a27712aadfefaafd3c6dd8c000d41acbac87c0e3b64584907aa727bd280a10bb8aac60435ca96a02f2dd3f875021de03e7bf60fe350c36b2392cad93c4
+Description: Cloudfuse GUI is a graphical interface for cloudfuse.
+ An easy to use graphical interface for cloudfuse.
+
