@@ -250,9 +250,7 @@ jobs:
 
     steps:
       - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y apt-utils createrepo-c
+        run: sudo apt-get update && sudo apt-get install -y createrepo-c
 
       - name: Checkout gh-pages branch
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -266,7 +264,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
-          mkdir -p ./packages
+          mkdir ./packages
           gh release download "$TAG" --repo "${{ github.repository }}" --dir ./packages -p "*.deb"
           gh release download "$TAG" --repo "${{ github.repository }}" --dir ./packages -p "*.rpm"
 
