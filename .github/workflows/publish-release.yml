@@ -5,6 +5,8 @@ on:
   push:
     tags:
       - "v*"
+    branches:
+      - fix-publish
 
 jobs:
   compile-gui:
@@ -243,7 +245,6 @@ jobs:
 
   update-package-repos:
     name: Update APT & RPM Repositories
-    needs: release
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -264,9 +265,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
-          mkdir ./packages
-          gh release download $TAG --dir ./packages -p "*.deb"
-          gh release download $TAG --dir ./packages -p "*.rpm"
+          mkdir -p ./packages
+          gh release download "$TAG" --repo "${{ github.repository }}" --dir ./packages -p "*.deb"
+          gh release download "$TAG" --repo "${{ github.repository }}" --dir ./packages -p "*.rpm"
 
       - name: Import GPG key
         id: import_gpg
@@ -304,7 +305,7 @@ jobs:
           # Create/update repository metadata
           createrepo_c --database rpm-repo/
           # Sign the repository metadata
-          gpg --detach-sign --armor -u "${{ steps.import_gpg.outputs.fingerprint }}" --batch --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" rpm/repodata/repomd.xml
+          gpg --detach-sign --armor -u "${{ steps.import_gpg.outputs.fingerprint }}" --batch --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" rpm-repo/repodata/repomd.xml
 
       - name: Commit and push repository updates
         working-directory: ./gh-pages
