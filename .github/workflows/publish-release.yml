@@ -60,7 +60,7 @@ jobs:
         shell: bash
         run: |
           ./create_gui.sh
-          mv dist/cloudfuseGUI dist/cloudfuse-gui_${{ runner.os }}
+          mv dist/cloudfuse-gui dist/cloudfuse-gui_${{ runner.os }}
 
       - name: Cache compiled GUI
         uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
@@ -138,7 +138,7 @@ jobs:
       - name: Rename installer
         shell: bash
         run: |
-          mv windows/Output/cloudfuse.exe windows/Output/cloudfuse-gui_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
+          mv windows/Output/cloudfuse-gui.exe windows/Output/cloudfuse-gui_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
 
       - name: Cache windows installer
         uses: actions/cache/save@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
