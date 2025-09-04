@@ -36,8 +36,8 @@ find deb_build/usr/lib/cloudfuse-gui -type f \( -name "*.so*" -o -executable \) 
 find deb_build -type d -exec chmod 0755 {} +
 find deb_build -type f -exec chmod 0644 {} +
 
-chmod +x deb_build/usr/lib/cloudfuse-gui/cloudfuseGUI
-ln -s "../lib/cloudfuse-gui/cloudfuseGUI" "deb_build/usr/bin/cloudfuse-gui"
+chmod +x deb_build/usr/lib/cloudfuse-gui/cloudfuse-gui
+ln -s "../lib/cloudfuse-gui/cloudfuse-gui" "deb_build/usr/bin/cloudfuse-gui"
 
 fakeroot dpkg-deb --build deb_build "$DEB_OUT"
 
