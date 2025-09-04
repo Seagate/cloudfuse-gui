@@ -243,6 +243,7 @@ jobs:
 
   update-package-repos:
     name: Update APT & RPM Repositories
+    needs: release
     runs-on: ubuntu-latest
     permissions:
       contents: write
