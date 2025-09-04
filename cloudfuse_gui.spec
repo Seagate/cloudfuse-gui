@@ -3,7 +3,7 @@
 
 a = Analysis(
     ['src/FuseGUI.py'],
-    pathex=[],
+    pathex=['src'],
     binaries=[],
     datas=[],
     hiddenimports=[],
