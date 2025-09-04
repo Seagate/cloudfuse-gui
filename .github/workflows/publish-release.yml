@@ -5,8 +5,6 @@ on:
   push:
     tags:
       - "v*"
-    branches:
-      - fix-publish
 
 jobs:
   compile-gui:
@@ -268,8 +266,8 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           mkdir -p ./packages
-          gh release download "v1.0.1" --repo "${{ github.repository }}" --dir ./packages -p "*.deb"
-          gh release download "v1.0.1" --repo "${{ github.repository }}" --dir ./packages -p "*.rpm"
+          gh release download "$TAG" --repo "${{ github.repository }}" --dir ./packages -p "*.deb"
+          gh release download "$TAG" --repo "${{ github.repository }}" --dir ./packages -p "*.rpm"
 
       - name: Import GPG key
         id: import_gpg
