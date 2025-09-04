@@ -20,7 +20,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='cloudfuseGUI',
+    name='cloudfuse-gui',
     debug=False,
     bootloader_ignore_signals=False,
     strip=True,
@@ -39,5 +39,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='cloudfuseGUI',
+    name='cloudfuse-gui',
 )

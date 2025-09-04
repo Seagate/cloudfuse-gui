@@ -6,13 +6,13 @@
 #define MyAppVersion "1.0.2"
 #define MyAppPublisher "SEAGATE TECHNOLOGY LLC"
 #define MyAppURL "https://github.com/Seagate/cloudfuse-gui"
-#define MyAppExeName "cloudfuseGUI.exe"
+#define MyAppExeName "cloudfuse-gui.exe"
 #define WinFSPInstaller "winfsp-2.1.25156.msi"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{C745CCCB-E042-4C42-852C-2FE1D287C38B}
+AppId={F0188041-3A5C-457F-8CC2-3E5B85B867DB}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -25,7 +25,7 @@ LicenseFile=..\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=commandline
-OutputBaseFilename=cloudfuse
+OutputBaseFilename=cloudfuse-gui
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -45,8 +45,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "{userappdata}\{#MyAppName}"; Flags: uninsalwaysuninstall
 
 [Files]
-Source: "..\dist\cloudfuseGUI_Windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\dist\cloudfuseGUI_Windows\_internal\*"; DestDir: "{app}\_internal\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\dist\cloudfuse-gui_Windows\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\cloudfuse-gui_Windows\_internal\*"; DestDir: "{app}\_internal\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\NOTICE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\README.md"; DestDir: "{app}"; Flags: ignoreversion
@@ -54,3 +54,6 @@ Source: "..\README.md"; DestDir: "{app}"; Flags: ignoreversion
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+
+[Run]
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}"; WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent runasoriginaluser
