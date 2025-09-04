@@ -251,7 +251,9 @@ jobs:
 
     steps:
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y createrepo-c
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apt-utils createrepo-c
 
       - name: Checkout gh-pages branch
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -279,12 +281,13 @@ jobs:
       - name: Update APT repository
         working-directory: ./gh-pages
         run: |
+          set -euo pipefail
           # Move new .deb files into the repository
           find ../packages -name "*_amd64.deb" -exec mv {} dists/stable/main/binary-amd64/ \;
           # Generate Packages metadata
           apt-ftparchive packages dists/stable/main/binary-amd64 > dists/stable/main/binary-amd64/Packages
           gzip -k -f dists/stable/main/binary-amd64/Packages
-          # Generate and sign the Release file
+          # Generate Release file
           apt-ftparchive \
             -o APT::FTPArchive::Release::Origin="Seagate Technology" \
             -o APT::FTPArchive::Release::Label="cloudfuse-gui" \
@@ -294,8 +297,11 @@ jobs:
             -o APT::FTPArchive::Release::Components="main" \
             -o APT::FTPArchive::Release::Description="APT repository for cloudfuse-gui" \
             release dists/stable > dists/stable/Release
-          gpg --clearsign -u "${{ steps.import_gpg.outputs.fingerprint }}" --batch --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" -o dists/stable/InRelease dists/stable/Release
-          gpg -u "${{ steps.import_gpg.outputs.fingerprint }}" --batch --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" -abs -o dists/stable/Release.gpg dists/stable/Release
+          # Remove old signatures to avoid "File exists"
+          rm -f dists/stable/InRelease dists/stable/Release.gpg
+          # Sign the Release file
+          gpg --yes --clearsign -u "${{ steps.import_gpg.outputs.fingerprint }}" --batch --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" -o dists/stable/InRelease dists/stable/Release
+          gpg --yes -u "${{ steps.import_gpg.outputs.fingerprint }}" --batch --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" -abs -o dists/stable/Release.gpg dists/stable/Release
 
       - name: Update RPM repository
         working-directory: ./gh-pages
