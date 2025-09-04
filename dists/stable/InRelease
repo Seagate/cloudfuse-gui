@@ -1,43 +1,43 @@
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA512
 
-Architectures: amd64 
+Architectures: amd64
 Codename: stable
 Components: main
-Date: Mon, 23 Jun 2025 16:55:43 +0000
+Date: Thu, 04 Sep 2025 15:08:29 +0000
 Description: APT repository for cloudfuse-gui
 Label: cloudfuse-gui
 Origin: Seagate Technology
 Suite: stable
 MD5Sum:
- 8a697e7c03a4ec0ec006326eb7cb20ce              202 Release
- 284df1d94b3200a9fb0818dbad30b8c3              669 main/binary-amd64/Packages
- e47ad60648540e4600a4e5a3a12a462a              467 main/binary-amd64/Packages.gz
+ 7e9a298035cb04f645e53391db95478a              201 Release
+ d14916f52184c6aa17c6a46b517daca8             1355 main/binary-amd64/Packages
+ ed0a068eb99aae2f74306982c72500e6              694 main/binary-amd64/Packages.gz
 SHA1:
- 071c4599fcdabf3b204a71044f3d42d1f95bf804              202 Release
- c9b32a6dfcf142f620b9648ac18ac5959bd3335c              669 main/binary-amd64/Packages
- 8e796947d4c7fb870b9ddc01d05a69b0c004f018              467 main/binary-amd64/Packages.gz
+ aff32f74465c857006f52da909f6f3cfd4208d92              201 Release
+ d02a6f6c133bc633a76a09cd107b672581d72350             1355 main/binary-amd64/Packages
+ e941fe7c18e03ee19607e49fb41ea6d8a516ff4c              694 main/binary-amd64/Packages.gz
 SHA256:
- 98ea309d58f4d864d5502f520b2be0e29ff59e175cdabe67ebd497f60e03a133              202 Release
- bd971d61561bd6f970353867c7cdc75ab61bdd1e98306e7521a33fea72f81d94              669 main/binary-amd64/Packages
- c94b9049a462880f1153ccdfa50490cfddd046456417ff1fa0a279c86b7c9435              467 main/binary-amd64/Packages.gz
+ f2c76d75df90a95082a61cb1a03f9fb13bbc5131173b774d9b1db7d5c27d601e              201 Release
+ 4de4375808971c9c15973d8c22c1d7f0980e1a90387c6b5f31e1b0ba6ad0f1ae             1355 main/binary-amd64/Packages
+ fbb4956a95a32c3c46bd4a705e85f5dd2c6c73c271aa801cc8cc0e6c367802de              694 main/binary-amd64/Packages.gz
 SHA512:
- 3259bc904da9fda00c6b19e407e7b135468e66813e3ab17c6353058b45d42572b0a32ac6f291055515c4a02780e4223f24c8ba4505d6c21968efe65606775c1a              202 Release
- c8fe3490a510704eba01341f85edcba3002cdbf3536387ffb700a7d6cc8a0b3c92df468f8e08c31bd66e029f89e3b109ff853d361b2fe14dc5d740156ae85378              669 main/binary-amd64/Packages
- 36f96c729d11e7a3c7573e7b0f43ae1c41c1789e875dc3b4da42a63b38823e784178e60aee983af6651ba4dc7efe6aa8b3ab0690bd95bb042721853211b9aeb8              467 main/binary-amd64/Packages.gz
+ 9fdec66a3265286ef435da18df7b79b8c7f8af3f363424a1b731de2ef7bc3a60ab08bf339242daa882ee290390c758f4fb3447bac31f40ae40c66f2dd9253ab0              201 Release
+ 3f53699d3b2cb539b74d7523dd08fce2835cb93fdfa6e86751dba2c907f4e6f9b68ee8bd88426d3b7283b7faf3ebc66a92ad318580c9b0d9b2eb9cc8cb44dac4             1355 main/binary-amd64/Packages
+ cad32398bd4035aa9e4662ba2a8b0b6b0f3737ed6349c79c22971e2fe4e382f911777b229d19192f3903ee9913a8c481cc4b4b75a54febd9b7744bc0b00da86b              694 main/binary-amd64/Packages.gz
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEet9V7TO+/KOOIB5as6eyCx5LkAEFAmhZjxsACgkQs6eyCx5L
-kAH/JhAA6d07LgVIEmr3cncodmaQH2E181Uy+eLl3qE05ge/2Sp7+Ul8xQC1V6cF
-6ZbNabkDPWQQ9effwmdypjmLnuoB+W9t+KAxTLkdv4wDKtpOY4IRrw1PJ7bKFuVJ
-OYb+s8vN7XelgKhQDPsYlULGonXZNh9YfIBFwg+xNGrluhuqLZOW8jqiqftnGLZ7
-wXx2zlnG6tENROCQPgtaIOiLfn6Wctuk+QcxXpztU6w0K2/QN8QzeG3HojbgwpgB
-yP9XEqRKd/5AV3ZHN8JNxh8oCsaeIVYxGNQP209PC2atJsR1pqDXNZWpq+TNc4qu
-vTO4c8C+gkc2IT+kwaGehWNmeiqeDlUXAPI5CLNwpT3xAwpI/EWbMeWjD4rdPY68
-IE65RQQtKMuHPvD3iNzmv0UlhTVP3AvxrpBZfM+qi4GDQ9UtcINaccOAgaiEga+u
-f7z5QsGBNP0JYS1F0MLlko59I09I2wHnUVKc9101Q78/FQtSDF0LpWS3yRqEea9V
-cuJctktnB0zYrV0m9Yseh5MblSv80QpQBhZejG7dtKxT3sAl9KgESrjsQVIeUIRV
-JcApQOyThdHPZvrUrvj+cIgDi/pjNd1oUPAZYrci6hfMfqWg67xAIFnAfsoq+tst
-rSdTx95PxGP0AdlRRzCN3sWBt2Sy7tFhi7xowOHRVRNS8aSH7LU=
-=PEVf
+iQIzBAEBCgAdFiEEet9V7TO+/KOOIB5as6eyCx5LkAEFAmi5q20ACgkQs6eyCx5L
+kAG2NxAA4W5buqpDBh5czuu/o/sszegdy4OMI5wlmeeDaA6/YzNTL8a8sFdsfrDQ
+XXdTyNdL1dn3/M8kEnrCzQ3EApc7DopXYS8wUlCV/CZaybao8wXR+tXyU3a3VPdz
+1AQeUEaDP1406IQxdqCAkWa2UiXkW3fCFyxleJ0/sMv2BDkBJfJ/WEqhmJ3jEKtM
+xLwlw9O51Pi+kHj1/3A6Vw2mj7kLk4MR8uz70FNHZcPPU7VL7Nb6cL584HWC1vps
+Xhaq+lyykR1Zdaa+06LxSR4himkO9xQrdrThULVwhBZzA3mCLBfEvvQTjNtCLlOf
+2ADu6E1lgd7CHRD+yb15eUnNHEWHEGFNnvVopllimc1dg/7lNWEVNhdD0btEeWET
+PPzJ0Iw8OouJiiBCpc62+iXGJ44yNTdwFrMaYJ0At9lPraufaXxCNs3dLvHHS+U0
+phXksE/vhI/Iq16YeW4xijOaikg/MUjChxE622MqFceN3cVaFiYAJcqS66J/pSVR
+/AsIB8/AFmgcM3e6CFfySdpB1aNXMZebdoN+LIloqZEr+UM76O3vTVDia7JfVFzQ
+SY1XDbMfEwXldQSPeQhXZTP6VfllFvQzl2pW3zL0Z6eoikC6Wjt6p6f0guJgQjV5
+UNVJzH5t9rnm5nzwueFA4n6z5bbRBnIbh0Fx3RGmEqTFFU5gZB0=
+=FZ+R
 -----END PGP SIGNATURE-----
