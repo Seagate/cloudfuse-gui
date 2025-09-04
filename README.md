@@ -2,15 +2,12 @@
 
 [![License][license-badge]][license-url]
 [![Release][release-badge]][release-url]
-[![GitHub Releases Stats of cloudfuse][stats-badge]][stats-url]
 [![OpenSSF Scorecard][openssf-badge]][openssf-url]
 
 [license-badge]: https://img.shields.io/github/license/Seagate/cloudfuse-gui
 [license-url]: https://github.com/Seagate/cloudfuse-gui/blob/main/LICENSE
 [release-badge]: https://img.shields.io/github/release/Seagate/cloudfuse-gui.svg
 [release-url]: https://github.com/Seagate/cloudfuse-gui/releases/latest
-[stats-badge]: https://img.shields.io/github/downloads/Seagate/cloudfuse-gui/total.svg?logo=github
-[stats-url]: https://somsubhra.github.io/github-release-stats/?username=Seagate&repository=cloudfuse-gui
 [openssf-badge]: https://img.shields.io/ossf-scorecard/github.com/Seagate/cloudfuse-gui?label=openssf%20scorecard
 [openssf-url]: https://scorecard.dev/viewer/?uri=github.com/Seagate/cloudfuse-gui
 
@@ -35,7 +32,9 @@ Cloudfuse-GUI adds a functional GUI to cloudfuse for both Windows and Linux.
 
 ### Windows
 
-Download and run the .exe installer from our latest release [here](https://github.com/Seagate/cloudfuse-gui/releases). Uncheck the "Launch Cloudfuse" upon finishing the installation. Run the GUI separately as admin after the install completes.
+Download and run the cloudfuse .exe installer from our latest release [here](https://github.com/Seagate/cloudfuse/releases).
+
+Download and run the cloudfuse-gui .exe installer from our latest release [here](https://github.com/Seagate/cloudfuse-gui/releases).
 
 ### Linux
 
