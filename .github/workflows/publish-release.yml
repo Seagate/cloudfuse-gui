@@ -230,7 +230,7 @@ jobs:
           sha256sum ${{ steps.assets.outputs.RPM_PACKAGE }} >> ${{ steps.assets.outputs.HASH_FILE }}
 
       - name: Create GitHub Release and Upload Assets
-        uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836 # v2
+        uses: softprops/action-gh-release@6da8fa9354ddfdc4aeace5fc48d7f679b5214090 # v2
         with:
           files: |
             ${{ steps.assets.outputs.LINUX_GUI_ZIP }}
