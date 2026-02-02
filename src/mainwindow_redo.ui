@@ -39,7 +39,7 @@
         <item>
          <widget class="QPushButton" name="pushButton_newMount">
           <property name="text">
-           <string>Add a bucket</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -59,21 +59,21 @@
         <item>
          <widget class="QPushButton" name="pushButton_forget">
           <property name="text">
-           <string>Forget this Bucket</string>
+           <string/>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="pushButton_mountbuttton">
           <property name="text">
-           <string>Un/Mount</string>
+           <string/>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="pushButton_settings">
           <property name="text">
-           <string>settings</string>
+           <string/>
           </property>
           <property name="iconSize">
            <size>
