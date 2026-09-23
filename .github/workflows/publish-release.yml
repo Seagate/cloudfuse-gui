@@ -63,7 +63,7 @@ jobs:
           mv dist/cloudfuse-gui dist/cloudfuse-gui_${{ runner.os }}
 
       - name: Cache compiled GUI
-        uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v4
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v4
         with:
           enableCrossOsArchive: true
           path: dist/cloudfuse-gui_${{ runner.os }}
@@ -109,7 +109,7 @@ jobs:
 
       - name: Cache WinFSP installer
         if: ${{ ! steps.restore-winfsp-installer.outputs.cache-hit }}
-        uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v4
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v4
         with:
           path: ${{ env.winfsp }}
           key: ${{ env.winfsp }}
@@ -141,7 +141,7 @@ jobs:
           mv windows/Output/cloudfuse-gui.exe windows/Output/cloudfuse-gui_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
 
       - name: Cache windows installer
-        uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v4
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v4
         with:
           enableCrossOsArchive: true
           path: windows/Output/cloudfuse-gui_${{ steps.get_version.outputs.VERSION }}_windows_amd64.exe
